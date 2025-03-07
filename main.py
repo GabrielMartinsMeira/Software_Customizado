@@ -146,6 +146,9 @@ def open_config_window():
         
         current_mac_var.set(get_lenght_mac())
 
+        def Enter_Clicked(event):
+            change_lenght_macs()
+        
         # Function to set the lenght written by the user,
         def change_lenght_macs():
             try:
@@ -167,8 +170,8 @@ def open_config_window():
         lenght_mac_entry.place(x=130, y=60)
 
         # Buttons
-        change_lenght_mac = ctk.CTkButton(config_window, text="Aplicar mudança", command=change_lenght_macs)
-        change_lenght_mac.place(x=130, y=100)
+        button_change_lenght_mac = ctk.CTkButton(config_window, text="Aplicar mudança", command=change_lenght_macs)
+        button_change_lenght_mac.place(x=130, y=100)
 
         # Label
         mac_label = ctk.CTkLabel(config_window, text="INSIRA A QUANTIDADE DE PRODUTOS A SEREM LIDOS", font=("Roboto", 16))
@@ -183,6 +186,7 @@ def open_config_window():
         current_mac = ctk.CTkLabel(config_window, textvariable=current_mac_var)
         current_mac.place(x=160, y=160)
 
+        config_window.bind('<Return>', Enter_Clicked)
         config_window.protocol("WM_DELETE_WINDOW", close_config_window)
     else:
         config_window.lift()
