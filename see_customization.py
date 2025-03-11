@@ -95,6 +95,7 @@ async def update_status_async(entry, status_label, fw_label, client_label, next_
                 if len(entry.get()) != 12 and entry.get() != "":
                     break
                 await asyncio.sleep(0.5)
+            await asyncio.sleep(0.5)
             mac = entry.get().lower()
             if len(mac) == 12:  # Verifica se o MAC tem exatamente 12 caracteres
                 result = consulta_mac(mac)  # Chame a função de consulta do seu script Python
