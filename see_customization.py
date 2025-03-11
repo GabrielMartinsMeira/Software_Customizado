@@ -69,8 +69,9 @@ def open_window_customize(async_loop):
             status_labels.append(status_label)
             fw_labels.append(fw_label)
             client_labels.append(client_label)
-
-            next_entry = entries[i + 1] if i < len(entries) - 1 else None
+            
+            i = 0
+            next_entry = entries[i] if i < len(entries) else None
 
             p = threading.Thread(target=start_async_loop, args=(mac_entry, status_label, fw_label, client_label, next_entry))
             workers.append(p)
