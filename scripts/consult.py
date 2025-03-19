@@ -1,5 +1,7 @@
 import os
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 MAINPATH = os.path.join(os.path.dirname(os.path.abspath("consult.py")))
 
@@ -14,6 +16,11 @@ def consulta_mac(mac):
         "Authorization": f"Bearer {token}"
         }
         
+        session = requests.Session()
+        retry = Retry(connect=3, backoff_factor=0.5)
+        adapter = HTTPAdapter(max_retries=retry)
+        session.mount('http://', adapter)
+        session.mount('https://', adapter)
         response = requests.get(URL, headers=headers)
         
         if response.status_code == 200:

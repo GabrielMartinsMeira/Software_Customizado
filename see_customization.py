@@ -93,7 +93,12 @@ async def update_status_async(entry, status_label, fw_label, client_label, next_
                 if entry.get() == "" and already_read == True:
                     already_read = False
                     break
-                if len(entry.get()) != 12 and entry.get() != "":
+                elif entry.get() != "" and already_read == True:
+                    await asyncio.sleep(5)
+                    already_read = False
+                    break
+                elif len(entry.get()) != 12 and entry.get() != "":
+                    already_read = False
                     break
                 await asyncio.sleep(0.5)
             await asyncio.sleep(0.5)
@@ -118,10 +123,9 @@ async def update_status_async(entry, status_label, fw_label, client_label, next_
                     status_label.configure(text="MAC não encontrado", text_color="red")
                     fw_label.configure(text="Versão de FW\nDesconhecida", text_color="black")
                     client_label.configure(text="Cliente\nDesconhecido", text_color="black")
-                # Simula o 'tab' para mover para o próximo campo
-                if next_entry:
-                    next_entry.event_generate("<Tab>")
+
             elif len(mac) != 12 and entry.get() != "":
+                next_entry.event_generate("<Shift-Tab>")
                 # Limpa o campo e mostra mensagem de erro
                 entry.delete(0, ctk.END)
                 status_label.configure(text="Erro: MAC incorreto", text_color="red")
@@ -131,6 +135,7 @@ async def update_status_async(entry, status_label, fw_label, client_label, next_
                 status_label.configure(text="Sem mac", text_color="blue")
                 fw_label.configure(text="Versão de FW\nDesconhecida", text_color="black")
                 client_label.configure(text="Cliente\nDesconhecido", text_color="black")
+
         except Exception as e:
             print("Error ", e)
             break
