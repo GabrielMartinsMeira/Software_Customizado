@@ -26,7 +26,7 @@ def open_window_customize(async_loop):
         window_customize = ctk.CTk()
 
         window_customize.title("Customize")
-        window_customize.geometry("1020x580")
+        window_customize.geometry("1020x630")
         window_customize.configure(fg_color='#433A3A')
 
         window_customize.resizable(False, False)
