@@ -5,9 +5,9 @@ from urllib3.util.retry import Retry
 
 MAINPATH = os.path.join(os.path.dirname(os.path.abspath("consult.py")))
 
-def consulta_mac(mac):
+def reaply_profile(mac):
     try:
-        URL = "https://helpdesk.remotize.intelbras.com.br/api/devices/" + mac   
+        URL = "https://helpdesk.remotize.intelbras.com.br/api/devices/" + mac + "/profile/status/reaply"
 
         with open(os.path.join(MAINPATH, "config", "token.txt"), 'r') as file:
             token = file.read().strip()
@@ -21,18 +21,12 @@ def consulta_mac(mac):
         adapter = HTTPAdapter(max_retries=retry)
         session.mount('http://', adapter)
         session.mount('https://', adapter)
-        response = requests.get(URL, headers=headers)
-        
+        response = requests.put(URL, headers=headers)
         if response.status_code == 200:
-            status = response.json()['profile']['status']
-            client = response.json()['profile']['name']
-            version = response.json()['fw_version']
-            
-            #print(status, client, version)
-
-            return status, version, client
+            return True
         else:
-            nomac = 10
-            return nomac
+            return False
     except Exception as e:
         print("Error ", e)
+
+reaply_profile("30e1f1cfaa81")
