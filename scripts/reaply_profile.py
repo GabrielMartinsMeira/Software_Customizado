@@ -7,7 +7,7 @@ MAINPATH = os.path.join(os.path.dirname(os.path.abspath("consult.py")))
 
 def reaply_profile(mac):
     try:
-        URL = "https://helpdesk.remotize.intelbras.com.br/api/devices/" + mac + "/profile/status/reaply"
+        URL = "https://" + mac + ""
 
         with open(os.path.join(MAINPATH, "config", "token.txt"), 'r') as file:
             token = file.read().strip()
