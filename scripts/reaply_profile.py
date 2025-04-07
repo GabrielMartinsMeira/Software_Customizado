@@ -28,5 +28,3 @@ def reaply_profile(mac):
             return False
     except Exception as e:
         print("Error ", e)
-
-reaply_profile("30e1f1cfaa81")
