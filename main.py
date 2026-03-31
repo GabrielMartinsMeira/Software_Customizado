@@ -4,7 +4,7 @@ import asyncio
 import os.path
 from PIL import Image
 from time import sleep
-from scripts.save_mac import get_mac_quantity, clean_last_10_macs, write_last_10_macs, save_mac, get_path, get_lenght_mac, get_infos
+from scripts.save_mac import get_mac_quantity, clean_last_10_macs, write_last_10_macs, save_mac, get_path, get_lenght_mac, get_infos, new_mac_file
 
 # Mainpath to the software, to allow work in any directory and OS
 MAINPATH = os.path.join(os.path.dirname(os.path.abspath("main.py")))
@@ -236,6 +236,7 @@ def check_max_macs(mac_frame, mac_label, lenght_mac):
             mac_label.set("Pallet Finalizado")
             mac_frame.configure(fg_color="#1BC900")
             convert_mac()
+            new_mac_file()
             sleep(2)
             clean_message(mac_label)
             mac_frame.configure(fg_color="#003F58")

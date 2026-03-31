@@ -5,6 +5,7 @@ import threading
 
 window_customize = None
 workers = []
+is_reapling = False
 
 def close_customize_window():
     global window_customize
@@ -18,6 +19,7 @@ def close_customize_window():
 
 def open_window_customize(async_loop):
     from config.config_customize import open_new_window
+    from scripts.reaply_profile import reaply_profile
     global window_customize
     if window_customize is None or not window_customize.winfo_exists():
         ctk.set_appearance_mode("dark")
@@ -65,6 +67,9 @@ def open_window_customize(async_loop):
             client_label = ctk.CTkLabel(card, text=f"Cliente\nDesconhecido", font=("Arial", 12), text_color="black", justify="center")
             client_label.pack(pady=5)
 
+            reaply_button = ctk.CTkButton(card, text="Reaplicar perfil", font=("Arial", 12), text_color="black")
+            reaply_button.pack(pady=5)
+
             entries.append(mac_entry)
             status_labels.append(status_label)
             fw_labels.append(fw_label)
@@ -73,7 +78,7 @@ def open_window_customize(async_loop):
             i = 0
             next_entry = entries[i] if i < len(entries) else None
 
-            p = threading.Thread(target=start_async_loop, args=(mac_entry, status_label, fw_label, client_label, next_entry))
+            p = threading.Thread(target=start_async_loop, args=(mac_entry, status_label, fw_label, client_label, reaply_button, next_entry))
             workers.append(p)
             p.start()
          
@@ -83,21 +88,28 @@ def open_window_customize(async_loop):
         window_customize.lift()
 
 # Função assíncrona para fazer a consulta e atualizar o status, versão e cliente
-async def update_status_async(entry, status_label, fw_label, client_label, next_entry=None):
+async def update_status_async(entry, status_label, fw_label, client_label, reaply_button, next_entry=None):
     from scripts.consult import consulta_mac
+    from scripts.reaply_profile import reaply_profile
     already_read = False
+    reaply_button.configure(command=lambda: reaply_profile(entry.get().lower()))
     while True:
         try:
-            while entry.get() == "" or already_read == True:
+            while True:
                 # When clear the labels will fall here
-                if entry.get() == "" and already_read == True:
+                if entry.get() == "" and already_read:
                     already_read = False
                     break
-                elif entry.get() != "" and already_read == True:
+                elif len(entry.get()) == 12 and not already_read:
+                    await asyncio.sleep(0.5)
+                    next_entry.event_generate("<Tab>")
+                    break
+                elif len(entry.get()) == 12 and already_read:
                     await asyncio.sleep(5)
                     already_read = False
                     break
                 elif len(entry.get()) != 12 and entry.get() != "":
+                    print("3")
                     already_read = False
                     break
                 await asyncio.sleep(0.5)
@@ -125,7 +137,7 @@ async def update_status_async(entry, status_label, fw_label, client_label, next_
                     client_label.configure(text="Cliente\nDesconhecido", text_color="black")
 
             elif len(mac) != 12 and entry.get() != "":
-                next_entry.event_generate("<Shift-Tab>")
+                #next_entry.event_generate("<Shift-Tab>")
                 # Limpa o campo e mostra mensagem de erro
                 entry.delete(0, ctk.END)
                 status_label.configure(text="Erro: MAC incorreto", text_color="red")
@@ -141,10 +153,10 @@ async def update_status_async(entry, status_label, fw_label, client_label, next_
             break
 
 # Função para iniciar a consulta de forma assíncrona
-def start_async_loop(entry, status_label, fw_label, client_label, next_entry=None):
+def start_async_loop(entry, status_label, fw_label, client_label, reaply_button, next_entry=None):
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
-    loop.run_until_complete(update_status_async(entry, status_label, fw_label, client_label, next_entry))
+    loop.run_until_complete(update_status_async(entry, status_label, fw_label, client_label, reaply_button, next_entry))
 
 # Função para limpar todos os campos de entrada
 def clear_entries():
